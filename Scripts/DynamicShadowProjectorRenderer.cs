@@ -8,18 +8,18 @@
 
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.LWRP;
+
 
 namespace DynamicShadowProjector.LWRP
 {
-	public class DynamicShadowProjectorRenderer : ScriptableRenderer
+	public class DynamicShadowProjectorRenderer : UnityEngine.Rendering.Universal.ScriptableRenderer
 	{
 		private RenderShadowTexturePass m_renderShadowTexturePass;
 		public DynamicShadowProjectorRenderer(DynamicShadowProjectorRendererData data) : base(data)
 		{
 			m_renderShadowTexturePass = new RenderShadowTexturePass(data);
 		}
-		public override void SetupCullingParameters(ref ScriptableCullingParameters cullingParameters, ref CameraData cameraData)
+		public override void SetupCullingParameters(ref ScriptableCullingParameters cullingParameters, ref UnityEngine.Rendering.Universal.CameraData cameraData)
 		{
 			ShadowTextureRenderer shadowTextureRenderer = cameraData.camera.GetComponent<ShadowTextureRenderer>();
 			if (shadowTextureRenderer == null)
@@ -43,7 +43,7 @@ namespace DynamicShadowProjector.LWRP
 			cullingParameters.shadowDistance = 0;
 			shadowTextureRenderer.ConfigureRenderTarget(m_renderShadowTexturePass, ref cameraData);
 		}
-		public override void Setup(ScriptableRenderContext context, ref RenderingData renderingData)
+		public override void Setup(ScriptableRenderContext context, ref UnityEngine.Rendering.Universal.RenderingData renderingData)
 		{
 			renderingData.cameraData.isStereoEnabled = false;
 			ShadowTextureRenderer shadowTextureRenderer = renderingData.cameraData.camera.GetComponent<ShadowTextureRenderer>();
@@ -52,7 +52,7 @@ namespace DynamicShadowProjector.LWRP
 				EnqueuePass(m_renderShadowTexturePass);
 			}
 		}
-		public override void SetupLights(ScriptableRenderContext context, ref RenderingData renderingData)
+		public override void SetupLights(ScriptableRenderContext context, ref UnityEngine.Rendering.Universal.RenderingData renderingData)
 		{
 
 		}

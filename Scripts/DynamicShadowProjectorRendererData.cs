@@ -6,15 +6,13 @@
 // Copyright (c) 2019 NYAHOON GAMES PTE. LTD.
 //
 
-using UnityEngine.Rendering.LWRP;
-
 namespace DynamicShadowProjector.LWRP
 {
-	public class DynamicShadowProjectorRendererData : ScriptableRendererData
+	public class DynamicShadowProjectorRendererData : UnityEngine.Rendering.Universal.ScriptableRendererData
 	{
 		private static DynamicShadowProjectorRendererData s_instance = null;
 		private static DynamicShadowProjectorRenderer s_rendererInstance = null;
-		public string[] m_sceneObjectShaderTagList = { "LightweightForward", "SRPDefaultUnlit" };
+		public string[] m_sceneObjectShaderTagList = { "UniversalForward", "SRPDefaultUnlit" };
 		public static DynamicShadowProjectorRendererData instance
 		{
 			get
@@ -27,8 +25,16 @@ namespace DynamicShadowProjector.LWRP
 					scriptPath = System.IO.Path.GetDirectoryName(scriptPath);
 					string dataPath = scriptPath.Replace("Scripts", "Data");
 					dataPath = System.IO.Path.Combine(dataPath, "DynamicShadowProjectorRenderer.asset");
-					UnityEditor.AssetDatabase.CreateAsset(rendererData, dataPath);
-					rendererData = UnityEditor.AssetDatabase.LoadAssetAtPath<DynamicShadowProjectorRendererData>(dataPath);
+					DynamicShadowProjectorRendererData test = UnityEditor.AssetDatabase.LoadAssetAtPath<DynamicShadowProjectorRendererData>(dataPath);
+					if (test == null)
+					{
+						UnityEditor.AssetDatabase.CreateAsset(rendererData, dataPath);
+						rendererData = UnityEditor.AssetDatabase.LoadAssetAtPath<DynamicShadowProjectorRendererData>(dataPath);
+					}
+					else
+					{
+						rendererData = test;
+					}
 #endif
 					s_instance = rendererData;
 				}
@@ -39,7 +45,7 @@ namespace DynamicShadowProjector.LWRP
 		{
 			s_instance = this;
 		}
-		protected override ScriptableRenderer Create()
+		protected override UnityEngine.Rendering.Universal.ScriptableRenderer Create()
 		{
 			if (s_rendererInstance == null)
 			{

@@ -21,20 +21,41 @@ namespace DynamicShadowProjector
 #if UNITY_EDITOR
 		partial void PartialInitialize()
 		{
-			LWRPAdditionalCameraData additionalCameraData = GetComponent<LWRPAdditionalCameraData>();
+			UnityEngine.Rendering.Universal.UniversalAdditionalCameraData additionalCameraData = GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
 			if (additionalCameraData == null)
 			{
-				additionalCameraData = gameObject.AddComponent<LWRPAdditionalCameraData>();
+				additionalCameraData = gameObject.AddComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
 				additionalCameraData.hideFlags = HideFlags.NotEditable;
 			}
 			additionalCameraData.renderShadows = false;
-			additionalCameraData.requiresColorOption = CameraOverrideOption.Off;
+			additionalCameraData.requiresColorOption = UnityEngine.Rendering.Universal.CameraOverrideOption.Off;
 			additionalCameraData.requiresColorTexture = false;
-			additionalCameraData.requiresDepthOption = CameraOverrideOption.Off;
+			additionalCameraData.requiresDepthOption = UnityEngine.Rendering.Universal.CameraOverrideOption.Off;
 			additionalCameraData.requiresDepthTexture = false;
+			UnityEditor.SerializedObject serializedPipelineAsset = new UnityEditor.SerializedObject(UnityEngine.Rendering.Universal.UniversalRenderPipeline.asset);
+			UnityEditor.SerializedProperty rendererList = serializedPipelineAsset.FindProperty("m_RendererDataList");
+			int rendererCount = rendererList.arraySize;
+			int rendererIndex = -1;
+			for (int i = 0; i < rendererCount; ++i)
+			{
+				UnityEditor.SerializedProperty rendererData = rendererList.GetArrayElementAtIndex(i);
+				if (rendererData.objectReferenceValue is DynamicShadowProjectorRendererData)
+				{
+					rendererIndex = i;
+					break;
+				}
+			}
+			if (rendererIndex == -1)
+			{
+				rendererIndex = rendererCount;
+				rendererList.InsertArrayElementAtIndex(rendererIndex);
+				UnityEditor.SerializedProperty rendererData = rendererList.GetArrayElementAtIndex(rendererIndex);
+				rendererData.objectReferenceValue = DynamicShadowProjectorRendererData.instance;
+				serializedPipelineAsset.ApplyModifiedPropertiesWithoutUndo();
+				Debug.Log("DynamicShadowProjectorRendererData was added to UniversalRenderPipelineAsset.", UnityEngine.Rendering.Universal.UniversalRenderPipeline.asset);
+			}
 			UnityEditor.SerializedObject serializedObject = new UnityEditor.SerializedObject(additionalCameraData);
-			serializedObject.FindProperty("m_RendererOverrideOption").intValue = (int)RendererOverrideOption.Custom;
-			serializedObject.FindProperty("m_RendererData").objectReferenceValue = DynamicShadowProjectorRendererData.instance;
+			serializedObject.FindProperty("m_RendererIndex").intValue = rendererIndex;
 			serializedObject.ApplyModifiedPropertiesWithoutUndo();
 			if (m_opaqueShadowShaderForLWRP == null)
 			{
@@ -53,7 +74,7 @@ namespace DynamicShadowProjector
 			m_camera.clearFlags = UnityEngine.CameraClearFlags.SolidColor;
 			m_camera.enabled = enabled;
 		}
-		internal void ConfigureRenderTarget(RenderShadowTexturePass pass, ref CameraData cameraData)
+		internal void ConfigureRenderTarget(RenderShadowTexturePass pass, ref UnityEngine.Rendering.Universal.CameraData cameraData)
 		{
 			PrepareRendering();
 			if (useIntermediateTexture)

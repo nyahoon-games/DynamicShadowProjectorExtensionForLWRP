@@ -8,18 +8,18 @@
 
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.LWRP;
+
 
 namespace DynamicShadowProjector.LWRP
 {
-	internal class RenderShadowTexturePass : ScriptableRenderPass
+	internal class RenderShadowTexturePass : UnityEngine.Rendering.Universal.ScriptableRenderPass
 	{
 		private Material m_overrideOpaqueMaterial;
 		private Material m_overrideTransparentMaterial;
 		private ShaderTagId[] m_shaderTagIds;
 		public RenderShadowTexturePass(DynamicShadowProjectorRendererData data)
 		{
-			renderPassEvent = RenderPassEvent.AfterRenderingTransparents;
+			renderPassEvent = UnityEngine.Rendering.Universal.RenderPassEvent.AfterRenderingTransparents;
 			m_shaderTagIds = new ShaderTagId[data.m_sceneObjectShaderTagList.Length];
 			for (int i = 0; i < data.m_sceneObjectShaderTagList.Length; ++i)
 			{
@@ -30,7 +30,7 @@ namespace DynamicShadowProjector.LWRP
 		{
 
 		}
-		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+		public override void Execute(ScriptableRenderContext context, ref UnityEngine.Rendering.Universal.RenderingData renderingData)
 		{
 			Camera camera = renderingData.cameraData.camera;
 			ShadowTextureRenderer shadowTextureRenderer = camera.GetComponent<ShadowTextureRenderer>();
