@@ -38,6 +38,11 @@ namespace DynamicShadowProjector.LWRP
 				{
 					cullingParameters.cullingMask = (uint)drawScene.cullingMask.value;
 				}
+				DrawTargetObject drawTarget = shadowTextureRenderer.GetComponent<DrawTargetObject>();
+				if (drawTarget != null)
+				{
+					drawTarget.SendMessage("OnPreCull");
+				}
 			}
 			cullingParameters.cullingOptions = CullingOptions.None;
 			cullingParameters.shadowDistance = 0;
