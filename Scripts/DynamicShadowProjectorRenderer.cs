@@ -43,10 +43,10 @@ namespace DynamicShadowProjector.LWRP
 				{
 					drawTarget.SendMessage("OnPreCull");
 				}
+				shadowTextureRenderer.ConfigureRenderTarget(m_renderShadowTexturePass, ref cameraData);
 			}
 			cullingParameters.cullingOptions = CullingOptions.None;
 			cullingParameters.shadowDistance = 0;
-			shadowTextureRenderer.ConfigureRenderTarget(m_renderShadowTexturePass, ref cameraData);
 		}
 		public override void Setup(ScriptableRenderContext context, ref RenderingData renderingData)
 		{
