@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_RendererFeatures: []
   m_sceneObjectShaderTagList:
-  - LightweightForward
+  - UniversalForward
   - SRPDefaultUnlit
