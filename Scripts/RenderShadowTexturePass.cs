@@ -9,7 +9,6 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-
 namespace DynamicShadowProjector.LWRP
 {
 	internal class RenderShadowTexturePass : UnityEngine.Rendering.Universal.ScriptableRenderPass

@@ -9,7 +9,6 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-
 namespace DynamicShadowProjector.LWRP
 {
 	public class DynamicShadowProjectorRenderer : UnityEngine.Rendering.Universal.ScriptableRenderer
@@ -51,6 +50,7 @@ namespace DynamicShadowProjector.LWRP
 		public override void Setup(ScriptableRenderContext context, ref UnityEngine.Rendering.Universal.RenderingData renderingData)
 		{
 			renderingData.cameraData.isStereoEnabled = false;
+			renderingData.cameraData.isSceneViewCamera = false;
 			ShadowTextureRenderer shadowTextureRenderer = renderingData.cameraData.camera.GetComponent<ShadowTextureRenderer>();
 			if (shadowTextureRenderer != null && shadowTextureRenderer.enabled && shadowTextureRenderer.isProjectorVisible)
 			{
