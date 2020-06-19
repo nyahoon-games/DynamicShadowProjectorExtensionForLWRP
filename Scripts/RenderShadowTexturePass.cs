@@ -16,7 +16,8 @@ namespace DynamicShadowProjector.LWRP
 		private Material m_overrideOpaqueMaterial;
 		private Material m_overrideTransparentMaterial;
 		private ShaderTagId[] m_shaderTagIds;
-		public RenderShadowTexturePass(DynamicShadowProjectorRendererData data)
+		private DynamicShadowProjectorRenderer m_renderer;
+		public RenderShadowTexturePass(DynamicShadowProjectorRendererData data, DynamicShadowProjectorRenderer renderer)
 		{
 			renderPassEvent = UnityEngine.Rendering.Universal.RenderPassEvent.AfterRenderingTransparents;
 			m_shaderTagIds = new ShaderTagId[data.m_sceneObjectShaderTagList.Length];
@@ -24,6 +25,7 @@ namespace DynamicShadowProjector.LWRP
 			{
 				m_shaderTagIds[i] = new ShaderTagId(data.m_sceneObjectShaderTagList[i]);
 			}
+			m_renderer = renderer;
 		}
 		public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
 		{
@@ -32,13 +34,14 @@ namespace DynamicShadowProjector.LWRP
 		public override void Execute(ScriptableRenderContext context, ref UnityEngine.Rendering.Universal.RenderingData renderingData)
 		{
 			Camera camera = renderingData.cameraData.camera;
-			ShadowTextureRenderer shadowTextureRenderer = camera.GetComponent<ShadowTextureRenderer>();
+			DynamicShadowProjectorRenderer.DynamicShadowProjectorComponents components = m_renderer.GetDynamicShadowProjectorComponents(renderingData.cameraData.camera);
+			ShadowTextureRenderer shadowTextureRenderer = components.shadowTextureRenderer;
 			if (shadowTextureRenderer == null || !shadowTextureRenderer.isProjectorVisible)
 			{
 				return;
 			}
 
-			DrawSceneObject drawScene = shadowTextureRenderer.GetComponent<DrawSceneObject>();
+			DrawSceneObject drawScene = components.drawSceneObject;
 			if (drawScene != null)
 			{
 				if (m_overrideOpaqueMaterial == null)
@@ -75,7 +78,7 @@ namespace DynamicShadowProjector.LWRP
 				FilteringSettings transparentFilteringSettings = new FilteringSettings(new RenderQueueRange(2500, RenderQueueRange.transparent.upperBound), drawScene.cullingMask);
 				context.DrawRenderers(renderingData.cullResults, ref drawingSettings, ref transparentFilteringSettings);
 			}
-			DrawTargetObject drawTarget = shadowTextureRenderer.GetComponent<DrawTargetObject>();
+			DrawTargetObject drawTarget = components.drawTargetObject;
 			if (drawTarget != null)
 			{
 				context.ExecuteCommandBuffer(drawTarget.commandBuffer);
