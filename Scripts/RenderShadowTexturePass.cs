@@ -37,7 +37,8 @@ namespace DynamicShadowProjector.LWRP
 			Camera camera = renderingData.cameraData.camera;
 
 			CommandBuffer cmd = CommandBufferPool.Get();
-			ScriptableRenderer.SetCameraMatrices(cmd, ref renderingData.cameraData, true);
+			//ScriptableRenderer.SetCameraMatrices(cmd, ref renderingData.cameraData, true);
+			cmd.SetViewProjectionMatrices(camera.worldToCameraMatrix, camera.projectionMatrix);
 			context.ExecuteCommandBuffer(cmd);
 			cmd.Clear();
 			CommandBufferPool.Release(cmd);
