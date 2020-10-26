@@ -8,18 +8,20 @@
 
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace DynamicShadowProjector.LWRP
 {
-	internal class RenderShadowTexturePass : UnityEngine.Rendering.Universal.ScriptableRenderPass
+	internal class RenderShadowTexturePass : ScriptableRenderPass
 	{
 		private Material m_overrideOpaqueMaterial;
 		private Material m_overrideTransparentMaterial;
 		private ShaderTagId[] m_shaderTagIds;
 		private DynamicShadowProjectorRenderer m_renderer;
+
 		public RenderShadowTexturePass(DynamicShadowProjectorRendererData data, DynamicShadowProjectorRenderer renderer)
 		{
-			renderPassEvent = UnityEngine.Rendering.Universal.RenderPassEvent.AfterRenderingTransparents;
+			renderPassEvent = RenderPassEvent.BeforeRendering;
 			m_shaderTagIds = new ShaderTagId[data.m_sceneObjectShaderTagList.Length];
 			for (int i = 0; i < data.m_sceneObjectShaderTagList.Length; ++i)
 			{
@@ -29,11 +31,17 @@ namespace DynamicShadowProjector.LWRP
 		}
 		public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
 		{
-
 		}
-		public override void Execute(ScriptableRenderContext context, ref UnityEngine.Rendering.Universal.RenderingData renderingData)
+		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
 		{
 			Camera camera = renderingData.cameraData.camera;
+
+			CommandBuffer cmd = CommandBufferPool.Get();
+			ScriptableRenderer.SetCameraMatrices(cmd, ref renderingData.cameraData, true);
+			context.ExecuteCommandBuffer(cmd);
+			cmd.Clear();
+			CommandBufferPool.Release(cmd);
+
 			DynamicShadowProjectorRenderer.DynamicShadowProjectorComponents components = m_renderer.GetDynamicShadowProjectorComponents(renderingData.cameraData.camera);
 			ShadowTextureRenderer shadowTextureRenderer = components.shadowTextureRenderer;
 			if (shadowTextureRenderer == null || !shadowTextureRenderer.isProjectorVisible)
