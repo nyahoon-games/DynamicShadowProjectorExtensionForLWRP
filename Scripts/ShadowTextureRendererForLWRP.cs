@@ -80,14 +80,12 @@ namespace DynamicShadowProjector
 			if (useIntermediateTexture)
 			{
 				pass.ConfigureTarget(new RenderTargetIdentifier(m_temporaryRenderTarget));
-				pass.ConfigureClear(ClearFlag.Color, m_camera.backgroundColor);
 			}
 			else
 			{
-				pass.ConfigureTarget(BuiltinRenderTextureType.CameraTarget, BuiltinRenderTextureType.CameraTarget);
-				cameraData.camera.allowMSAA = multiSampling != TextureMultiSample.x1;
-				cameraData.cameraTargetDescriptor.msaaSamples = (int)multiSampling;
+				pass.ConfigureTarget(new RenderTargetIdentifier(m_shadowTexture));
 			}
+			pass.ConfigureClear(ClearFlag.Color, m_camera.backgroundColor);
 		}
 		internal void ExecutePostRenderProcess(ScriptableRenderContext context)
 		{
