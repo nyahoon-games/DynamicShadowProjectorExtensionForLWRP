@@ -18,7 +18,6 @@ namespace DynamicShadowProjector
 		public Shader m_opaqueShadowShaderForLWRP;
 		public Shader m_transparentShadowShaderForLWRP;
 
-#if UNITY_EDITOR
 		partial void PartialInitialize()
 		{
 			UniversalAdditionalCameraData additionalCameraData = GetComponent<UniversalAdditionalCameraData>();
@@ -32,31 +31,7 @@ namespace DynamicShadowProjector
 			additionalCameraData.requiresColorTexture = false;
 			additionalCameraData.requiresDepthOption = CameraOverrideOption.Off;
 			additionalCameraData.requiresDepthTexture = false;
-			UnityEditor.SerializedObject serializedPipelineAsset = new UnityEditor.SerializedObject(UniversalRenderPipeline.asset);
-			UnityEditor.SerializedProperty rendererList = serializedPipelineAsset.FindProperty("m_RendererDataList");
-			int rendererCount = rendererList.arraySize;
-			int rendererIndex = -1;
-			for (int i = 0; i < rendererCount; ++i)
-			{
-				UnityEditor.SerializedProperty rendererData = rendererList.GetArrayElementAtIndex(i);
-				if (rendererData.objectReferenceValue is DynamicShadowProjectorRendererData)
-				{
-					rendererIndex = i;
-					break;
-				}
-			}
-			if (rendererIndex == -1)
-			{
-				rendererIndex = rendererCount;
-				rendererList.InsertArrayElementAtIndex(rendererIndex);
-				UnityEditor.SerializedProperty rendererData = rendererList.GetArrayElementAtIndex(rendererIndex);
-				rendererData.objectReferenceValue = DynamicShadowProjectorRendererData.instance;
-				serializedPipelineAsset.ApplyModifiedPropertiesWithoutUndo();
-				Debug.Log("DynamicShadowProjectorRendererData was added to UniversalRenderPipelineAsset.", UniversalRenderPipeline.asset);
-			}
-			UnityEditor.SerializedObject serializedObject = new UnityEditor.SerializedObject(additionalCameraData);
-			serializedObject.FindProperty("m_RendererIndex").intValue = rendererIndex;
-			serializedObject.ApplyModifiedPropertiesWithoutUndo();
+			additionalCameraData.SetRenderer(DynamicShadowProjectorRendererData.instance.rendererIndex);
 			if (m_opaqueShadowShaderForLWRP == null)
 			{
 				m_opaqueShadowShaderForLWRP = Shader.Find("DynamicShadowProjector/Shadow/Opaque");
@@ -66,7 +41,6 @@ namespace DynamicShadowProjector
 				m_transparentShadowShaderForLWRP = Shader.Find("DynamicShadowProjector/Shadow/Transparent");
 			}
 		}
-#endif
 		internal void UpdateVisibilityAndPrepareRendering()
 		{
 			OnPreCull();

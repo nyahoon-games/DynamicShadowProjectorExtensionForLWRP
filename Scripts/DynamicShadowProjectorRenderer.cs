@@ -100,7 +100,6 @@ namespace DynamicShadowProjector.LWRP
 		}
 		public override void Setup(ScriptableRenderContext context, ref RenderingData renderingData)
 		{
-			renderingData.cameraData.isStereoEnabled = false;
 			DynamicShadowProjectorComponents components = GetDynamicShadowProjectorComponents(renderingData.cameraData.camera);
 			ShadowTextureRenderer shadowTextureRenderer = components.shadowTextureRenderer;
 			if (shadowTextureRenderer != null && shadowTextureRenderer.isActiveAndEnabled && shadowTextureRenderer.isProjectorVisible)
