@@ -31,6 +31,9 @@ namespace DynamicShadowProjector
 			additionalCameraData.requiresColorTexture = false;
 			additionalCameraData.requiresDepthOption = CameraOverrideOption.Off;
 			additionalCameraData.requiresDepthTexture = false;
+#if UNITY_2020_1_OR_NEWER
+			additionalCameraData.allowXRRendering = false; // available from URP 10.0.0
+#endif
 			additionalCameraData.SetRenderer(DynamicShadowProjectorRendererData.instance.rendererIndex);
 			if (m_opaqueShadowShaderForLWRP == null)
 			{
