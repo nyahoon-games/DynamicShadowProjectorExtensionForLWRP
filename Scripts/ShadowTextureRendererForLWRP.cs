@@ -44,6 +44,21 @@ namespace DynamicShadowProjector
 				m_transparentShadowShaderForLWRP = Shader.Find("DynamicShadowProjector/Shadow/Transparent");
 			}
 		}
+		private ProjectorForSRP.ProjectorForSRP m_projectorForSRP;
+		partial void OnRenderTextureCreated()
+		{
+			if (m_projectorForSRP == null)
+			{
+				m_projectorForSRP = GetComponent<ProjectorForSRP.ProjectorForSRP>();
+				if (m_projectorForSRP == null)
+				{
+					Debug.LogError("Projector For LWRP component was not found!", this);
+					return;
+				}
+			}
+			m_projectorForSRP.propertyBlock.SetTexture(s_shadowTexParamID, m_shadowTexture);
+			m_projectorForSRP.propertyBlock.SetFloat(s_mipLevelParamID, m_mipLevel);
+		}
 		internal void UpdateVisibilityAndPrepareRendering()
 		{
 			OnPreCull();
