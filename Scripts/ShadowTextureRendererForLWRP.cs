@@ -15,9 +15,6 @@ namespace DynamicShadowProjector
 {
 	public partial class ShadowTextureRenderer
 	{
-		public Shader m_opaqueShadowShaderForLWRP;
-		public Shader m_transparentShadowShaderForLWRP;
-
 #if UNITY_EDITOR
 		partial void PartialInitialize()
 		{
@@ -36,14 +33,6 @@ namespace DynamicShadowProjector
 			serializedObject.FindProperty("m_RendererOverrideOption").intValue = (int)RendererOverrideOption.Custom;
 			serializedObject.FindProperty("m_RendererData").objectReferenceValue = DynamicShadowProjectorRendererData.instance;
 			serializedObject.ApplyModifiedPropertiesWithoutUndo();
-			if (m_opaqueShadowShaderForLWRP == null)
-			{
-				m_opaqueShadowShaderForLWRP = Shader.Find("DynamicShadowProjector/Shadow/Opaque");
-			}
-			if (m_transparentShadowShaderForLWRP == null)
-			{
-				m_transparentShadowShaderForLWRP = Shader.Find("DynamicShadowProjector/Shadow/Transparent");
-			}
 		}
 #endif
 		private ProjectorForSRP.ProjectorForSRP m_projectorForSRP;

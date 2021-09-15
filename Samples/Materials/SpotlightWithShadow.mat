@@ -72,6 +72,7 @@ Material:
     - _BumpScale: 1
     - _ClipScale: 100
     - _Cutoff: 0.5
+    - _DSPCull: 2
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EmissionScaleUI: 0
