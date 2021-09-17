@@ -37,6 +37,7 @@ Material:
     - _Ambient: 0.3
     - _ClipScale: 100
     - _Cutoff: 0
+    - _DSPCull: 2
     - _Offset: -1
     - _OffsetSlope: -1
     m_Colors:

@@ -15,9 +15,6 @@ namespace DynamicShadowProjector
 {
 	public partial class ShadowTextureRenderer
 	{
-		public Shader m_opaqueShadowShaderForLWRP;
-		public Shader m_transparentShadowShaderForLWRP;
-
 		partial void PartialInitialize()
 		{
 			UniversalAdditionalCameraData additionalCameraData = GetComponent<UniversalAdditionalCameraData>();
@@ -35,14 +32,6 @@ namespace DynamicShadowProjector
 			additionalCameraData.allowXRRendering = false; // available from URP 10.0.0
 #endif
 			additionalCameraData.SetRenderer(DynamicShadowProjectorRendererData.instance.rendererIndex);
-			if (m_opaqueShadowShaderForLWRP == null)
-			{
-				m_opaqueShadowShaderForLWRP = Shader.Find("DynamicShadowProjector/Shadow/Opaque");
-			}
-			if (m_transparentShadowShaderForLWRP == null)
-			{
-				m_transparentShadowShaderForLWRP = Shader.Find("DynamicShadowProjector/Shadow/Transparent");
-			}
 		}
 		private ProjectorForSRP.ProjectorForSRP m_projectorForSRP;
 		partial void OnRenderTextureCreated()
