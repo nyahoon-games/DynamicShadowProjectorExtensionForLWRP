@@ -256,10 +256,6 @@ MonoBehaviour:
   m_preferredTextureFormats: 
   m_camerasForViewClipTest: []
   m_camera: {fileID: 170372683}
-  m_opaqueShadowShaderForLWRP: {fileID: 4800000, guid: 5c1567556c62647e6b5a1a102ef100d9,
-    type: 3}
-  m_transparentShadowShaderForLWRP: {fileID: 4800000, guid: fdbb9b05799ef4de98bfa27a7662c6e6,
-    type: 3}
 --- !u!119 &170372685
 Projector:
   m_ObjectHideFlags: 2
@@ -339,7 +335,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   renderingLayerMask: -1
   renderQueueLowerBound: 0
-  renderQueueUpperBound: 2400
+  renderQueueUpperBound: 2399
   terrainRenderFlags: 6
   terrainsToBeFilteredWithRenderFlags: []
   m_shaderTagList: []
@@ -382,7 +378,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   renderingLayerMask: -1
   renderQueueLowerBound: 2400
-  renderQueueUpperBound: 3000
+  renderQueueUpperBound: 2999
   m_shaderTagList: []
   m_renderPassEvent: 300
   m_perObjectData: 0
@@ -1130,6 +1126,7 @@ MonoBehaviour:
   baseColorName: _BaseColor
   alphaCutoffName: _Cutoff
   alphaCutoffKeyword: _ALPHATEST_ON
+  cullModeName: 
 --- !u!114 &997522459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1238,10 +1235,6 @@ MonoBehaviour:
   m_preferredTextureFormats: 
   m_camerasForViewClipTest: []
   m_camera: {fileID: 1215947126}
-  m_opaqueShadowShaderForLWRP: {fileID: 4800000, guid: 5c1567556c62647e6b5a1a102ef100d9,
-    type: 3}
-  m_transparentShadowShaderForLWRP: {fileID: 4800000, guid: fdbb9b05799ef4de98bfa27a7662c6e6,
-    type: 3}
 --- !u!119 &1215947123
 Projector:
   m_ObjectHideFlags: 0
@@ -1416,7 +1409,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   renderingLayerMask: -1
   renderQueueLowerBound: 0
-  renderQueueUpperBound: 2400
+  renderQueueUpperBound: 2399
   terrainRenderFlags: 6
   terrainsToBeFilteredWithRenderFlags: []
   m_shaderTagList: []
@@ -1459,7 +1452,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   renderingLayerMask: -1
   renderQueueLowerBound: 2400
-  renderQueueUpperBound: 3000
+  renderQueueUpperBound: 2999
   m_shaderTagList: []
   m_renderPassEvent: 300
   m_perObjectData: 0
@@ -1584,6 +1577,7 @@ MonoBehaviour:
   baseColorName: _BaseColor
   alphaCutoffName: _Cutoff
   alphaCutoffKeyword: _ALPHATEST_ON
+  cullModeName: 
 --- !u!1 &1373375458
 GameObject:
   m_ObjectHideFlags: 0
@@ -1795,10 +1789,6 @@ MonoBehaviour:
   m_preferredTextureFormats: 
   m_camerasForViewClipTest: []
   m_camera: {fileID: 1825361368}
-  m_opaqueShadowShaderForLWRP: {fileID: 4800000, guid: 5c1567556c62647e6b5a1a102ef100d9,
-    type: 3}
-  m_transparentShadowShaderForLWRP: {fileID: 4800000, guid: fdbb9b05799ef4de98bfa27a7662c6e6,
-    type: 3}
 --- !u!119 &1825361370
 Projector:
   m_ObjectHideFlags: 0
@@ -1864,7 +1854,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   renderingLayerMask: -1
   renderQueueLowerBound: 0
-  renderQueueUpperBound: 2400
+  renderQueueUpperBound: 2399
   terrainRenderFlags: 6
   terrainsToBeFilteredWithRenderFlags: []
   m_shaderTagList: []
@@ -1886,7 +1876,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   renderingLayerMask: -1
   renderQueueLowerBound: 2400
-  renderQueueUpperBound: 3000
+  renderQueueUpperBound: 2999
   m_shaderTagList: []
   m_renderPassEvent: 300
   m_perObjectData: 0
@@ -2072,10 +2062,6 @@ MonoBehaviour:
   m_preferredTextureFormats: 
   m_camerasForViewClipTest: []
   m_camera: {fileID: 1836496670}
-  m_opaqueShadowShaderForLWRP: {fileID: 4800000, guid: 5c1567556c62647e6b5a1a102ef100d9,
-    type: 3}
-  m_transparentShadowShaderForLWRP: {fileID: 4800000, guid: fdbb9b05799ef4de98bfa27a7662c6e6,
-    type: 3}
 --- !u!119 &1836496672
 Projector:
   m_ObjectHideFlags: 2
