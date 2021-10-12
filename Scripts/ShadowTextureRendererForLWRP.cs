@@ -39,10 +39,6 @@ namespace DynamicShadowProjector
 			set { m_refProjector.projectorForLWRP = value; }
 		}
 
-		public ShadowTextureRenderer()
-		{
-			s_useCamera = false;
-		}
 		partial void PartialInitialize()
 		{
 #if UNITY_EDITOR
