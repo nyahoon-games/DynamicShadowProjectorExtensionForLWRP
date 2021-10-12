@@ -17,93 +17,88 @@ namespace DynamicShadowProjector.LWRP
 		private Material m_overrideOpaqueMaterial;
 		private Material m_overrideAlphaCutoffMaterial;
 		private Material m_overrideTransparentMaterial;
-		private ShaderTagId[] m_shaderTagIds;
-		private DynamicShadowProjectorRenderer m_renderer;
-		public RenderShadowTexturePass(DynamicShadowProjectorRendererData data, DynamicShadowProjectorRenderer renderer)
+		private ShadowTextureRenderer m_renderer;
+
+		public RenderShadowTexturePass(ShadowTextureRenderer renderer)
 		{
-			renderPassEvent = RenderPassEvent.AfterRenderingTransparents;
-			m_shaderTagIds = new ShaderTagId[data.m_sceneObjectShaderTagList.Length];
-			for (int i = 0; i < data.m_sceneObjectShaderTagList.Length; ++i)
-			{
-				m_shaderTagIds[i] = new ShaderTagId(data.m_sceneObjectShaderTagList[i]);
-			}
+			renderPassEvent = RenderPassEvent.BeforeRendering;
 			m_renderer = renderer;
 		}
 		public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
 		{
-
+			cmd.SetViewMatrix(m_renderer.projectorCamera.worldToCameraMatrix);
+			cmd.SetProjectionMatrix(m_renderer.projectorCamera.projectionMatrix);
+			m_renderer.ConfigureRenderTarget(this);
 		}
 		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
 		{
-			Camera camera = renderingData.cameraData.camera;
-			DynamicShadowProjectorRenderer.DynamicShadowProjectorComponents components = m_renderer.GetDynamicShadowProjectorComponents(renderingData.cameraData.camera);
-			ShadowTextureRenderer shadowTextureRenderer = components.shadowTextureRenderer;
-			if (shadowTextureRenderer == null || !shadowTextureRenderer.isProjectorVisible)
-			{
-				return;
-			}
-
-			DrawSceneObject drawScene = components.drawSceneObject;
+			DrawSceneObject drawScene = m_renderer.drawSceneObject;
 			if (drawScene != null)
 			{
-				if (m_overrideOpaqueMaterial == null)
+				ScriptableCullingParameters cullingParameters = new ScriptableCullingParameters();
+				if (m_renderer.projectorCamera.TryGetCullingParameters(false, out cullingParameters))
 				{
-					m_overrideOpaqueMaterial = new Material(drawScene.replacementShader);
+					cullingParameters.cullingMask = (uint)drawScene.cullingMask.value;
+					CullingResults cullingResults = context.Cull(ref cullingParameters);
+					if (m_overrideOpaqueMaterial == null)
+					{
+						m_overrideOpaqueMaterial = new Material(drawScene.replacementShader);
+					}
+					else if (m_overrideOpaqueMaterial.shader != drawScene.replacementShader)
+					{
+						m_overrideOpaqueMaterial.shader = drawScene.replacementShader;
+					}
+					if (m_overrideAlphaCutoffMaterial == null)
+					{
+						m_overrideAlphaCutoffMaterial = new Material(drawScene.replacementShader);
+						m_overrideAlphaCutoffMaterial.EnableKeyword("_ALPHATEST_ON");
+						m_overrideAlphaCutoffMaterial.SetFloat("_DstBlend", 10.0f); // OneMinusSrcAlpha
+					}
+					else if (m_overrideAlphaCutoffMaterial.shader != drawScene.replacementShader)
+					{
+						m_overrideAlphaCutoffMaterial.shader = drawScene.replacementShader;
+					}
+					if (m_overrideTransparentMaterial == null)
+					{
+						m_overrideTransparentMaterial = new Material(drawScene.replacementShader);
+						m_overrideTransparentMaterial.EnableKeyword("_ALPHATEST_ON");
+						m_overrideTransparentMaterial.EnableKeyword("_ALPHABLEND_ON");
+						m_overrideTransparentMaterial.SetFloat("_SrcBlend", 5.0f); // SrcAlpha
+						m_overrideTransparentMaterial.SetFloat("_DstBlend", 10.0f); // OneMinusSrcAlpha
+					}
+					else if (m_overrideTransparentMaterial.shader != drawScene.replacementShader)
+					{
+						m_overrideTransparentMaterial.shader = drawScene.replacementShader;
+					}
+					DrawingSettings drawingSettings = new DrawingSettings(drawScene.shaderTagIds[0], new SortingSettings(m_renderer.projectorCamera));
+					for (int i = 1; i < drawScene.shaderTagIds.Length; ++i)
+					{
+						drawingSettings.SetShaderPassName(i, drawScene.shaderTagIds[i]);
+					}
+					// draw opaque objects
+					drawingSettings.overrideMaterial = m_overrideOpaqueMaterial;
+					drawingSettings.overrideMaterialPassIndex = 0;
+					drawingSettings.enableDynamicBatching = renderingData.supportsDynamicBatching;
+					drawingSettings.enableInstancing = true;
+					drawingSettings.perObjectData = PerObjectData.None;
+					FilteringSettings opaqueFilteringSettings = new FilteringSettings(new RenderQueueRange(RenderQueueRange.opaque.lowerBound, 2400), drawScene.cullingMask);
+					context.DrawRenderers(cullingResults, ref drawingSettings, ref opaqueFilteringSettings);
+					// draw alpha-cutoff objects
+					drawingSettings.overrideMaterial = m_overrideAlphaCutoffMaterial;
+					FilteringSettings alphacutoutFilteringSettings = new FilteringSettings(new RenderQueueRange(2400, RenderQueueRange.opaque.upperBound), drawScene.cullingMask);
+					context.DrawRenderers(cullingResults, ref drawingSettings, ref alphacutoutFilteringSettings);
+					// draw transparent objects
+					drawingSettings.overrideMaterial = m_overrideTransparentMaterial;
+					FilteringSettings transparentFilteringSettings = new FilteringSettings(new RenderQueueRange(RenderQueueRange.transparent.lowerBound, RenderQueueRange.transparent.upperBound), drawScene.cullingMask);
+					context.DrawRenderers(cullingResults, ref drawingSettings, ref transparentFilteringSettings);
 				}
-				else if (m_overrideOpaqueMaterial.shader != drawScene.replacementShader)
-				{
-					m_overrideOpaqueMaterial.shader = drawScene.replacementShader;
-				}
-				if (m_overrideAlphaCutoffMaterial == null)
-				{
-					m_overrideAlphaCutoffMaterial = new Material(drawScene.replacementShader);
-					m_overrideAlphaCutoffMaterial.EnableKeyword("_ALPHATEST_ON");
-					m_overrideAlphaCutoffMaterial.SetFloat("_DstBlend", 10.0f); // OneMinusSrcAlpha
-				}
-				else if (m_overrideAlphaCutoffMaterial.shader != drawScene.replacementShader)
-				{
-					m_overrideAlphaCutoffMaterial.shader = drawScene.replacementShader;
-				}
-				if (m_overrideTransparentMaterial == null)
-				{
-					m_overrideTransparentMaterial = new Material(drawScene.replacementShader);
-					m_overrideTransparentMaterial.EnableKeyword("_ALPHATEST_ON");
-					m_overrideTransparentMaterial.EnableKeyword("_ALPHABLEND_ON");
-					m_overrideTransparentMaterial.SetFloat("_SrcBlend", 5.0f); // SrcAlpha
-					m_overrideTransparentMaterial.SetFloat("_DstBlend", 10.0f); // OneMinusSrcAlpha
-				}
-				else if (m_overrideTransparentMaterial.shader != drawScene.replacementShader)
-				{
-					m_overrideTransparentMaterial.shader = drawScene.replacementShader;
-				}
-				DrawingSettings drawingSettings = new DrawingSettings(m_shaderTagIds[0], new SortingSettings(camera));
-				for (int i = 1; i < m_shaderTagIds.Length; ++i)
-				{
-					drawingSettings.SetShaderPassName(i, m_shaderTagIds[i]);
-				}
-				// draw opaque objects
-				drawingSettings.overrideMaterial = m_overrideOpaqueMaterial;
-				drawingSettings.overrideMaterialPassIndex = 0;
-				drawingSettings.enableDynamicBatching = renderingData.supportsDynamicBatching;
-				drawingSettings.enableInstancing = true;
-				drawingSettings.perObjectData = PerObjectData.None;
-				FilteringSettings opaqueFilteringSettings = new FilteringSettings(new RenderQueueRange(RenderQueueRange.opaque.lowerBound, 2400), drawScene.cullingMask);
-				context.DrawRenderers(renderingData.cullResults, ref drawingSettings, ref opaqueFilteringSettings);
-				// draw alpha-cutoff objects
-				drawingSettings.overrideMaterial = m_overrideAlphaCutoffMaterial;
-				FilteringSettings alphacutoutFilteringSettings = new FilteringSettings(new RenderQueueRange(2400, RenderQueueRange.opaque.upperBound), drawScene.cullingMask);
-				context.DrawRenderers(renderingData.cullResults, ref drawingSettings, ref alphacutoutFilteringSettings);
-				// draw transparent objects
-				drawingSettings.overrideMaterial = m_overrideTransparentMaterial;
-				FilteringSettings transparentFilteringSettings = new FilteringSettings(new RenderQueueRange(RenderQueueRange.transparent.lowerBound, RenderQueueRange.transparent.upperBound), drawScene.cullingMask);
-				context.DrawRenderers(renderingData.cullResults, ref drawingSettings, ref transparentFilteringSettings);
 			}
-			DrawTargetObject drawTarget = components.drawTargetObject;
+			DrawTargetObject drawTarget = m_renderer.drawTargetObject;
 			if (drawTarget != null)
 			{
 				context.ExecuteCommandBuffer(drawTarget.commandBuffer);
 			}
-			shadowTextureRenderer.ExecutePostRenderProcess(context);
+			m_renderer.ExecutePostRenderProcess(context);
 		}
 		public override void FrameCleanup(CommandBuffer cmd)
 		{
