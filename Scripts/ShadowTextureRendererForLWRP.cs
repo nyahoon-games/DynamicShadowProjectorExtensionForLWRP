@@ -15,47 +15,72 @@ namespace DynamicShadowProjector
 {
 	public partial class ShadowTextureRenderer
 	{
+		private RenderShadowTexturePass m_renderPass;
+
+		// use struct to prevent Unity Engine from restoring the object reference after rebuild scripts.
+		private struct ProjectorReference
+		{
+			public ProjectorForLWRP.ProjectorForLWRP projectorForLWRP;
+		}
+		ProjectorReference m_refProjector = new ProjectorReference();
+		public DrawTargetObject drawTargetObject
+		{
+			get;
+			private set;
+		}
+		public DrawSceneObject drawSceneObject
+		{
+			get;
+			private set;
+		}
+		private ProjectorForLWRP.ProjectorForLWRP projectorForLWRP
+		{
+			get { return m_refProjector.projectorForLWRP; }
+			set { m_refProjector.projectorForLWRP = value; }
+		}
+
 		partial void PartialInitialize()
 		{
-			UniversalAdditionalCameraData additionalCameraData = GetComponent<UniversalAdditionalCameraData>();
-			if (additionalCameraData == null)
-			{
-				additionalCameraData = gameObject.AddComponent<UniversalAdditionalCameraData>();
-				additionalCameraData.hideFlags = HideFlags.NotEditable;
-			}
-			additionalCameraData.renderShadows = false;
-			additionalCameraData.requiresColorOption = CameraOverrideOption.Off;
-			additionalCameraData.requiresColorTexture = false;
-			additionalCameraData.requiresDepthOption = CameraOverrideOption.Off;
-			additionalCameraData.requiresDepthTexture = false;
-#if UNITY_2020_1_OR_NEWER
-			additionalCameraData.allowXRRendering = false; // available from URP 10.0.0
-#endif
-			additionalCameraData.SetRenderer(DynamicShadowProjectorRendererData.instance.rendererIndex);
+			m_camera.enabled = false;
+			drawTargetObject = GetComponent<DrawTargetObject>();
+			drawSceneObject = GetComponent<DrawSceneObject>();
 		}
-		private ProjectorForSRP.ProjectorForSRP m_projectorForSRP;
+		private void OnRenderProjector(Camera camera)
+		{
+			if (!enabled)
+			{
+				return;
+			}
+			if (drawTargetObject != null)
+			{
+				drawTargetObject.OnPreCull();
+			}
+			if (m_renderPass == null)
+			{
+				m_renderPass = new RenderShadowTexturePass(this);
+			}
+			ProjectorForLWRP.ProjectorRendererFeature.AddRenderPass(camera, m_renderPass);
+			if (m_isTexturePropertyChanged)
+			{
+				CreateRenderTexture();
+			}
+		}
 		partial void OnRenderTextureCreated()
 		{
-			if (m_projectorForSRP == null)
+			if (projectorForLWRP == null)
 			{
-				m_projectorForSRP = GetComponent<ProjectorForSRP.ProjectorForSRP>();
-				if (m_projectorForSRP == null)
+				projectorForLWRP = GetComponent<ProjectorForLWRP.ProjectorForLWRP>();
+				projectorForLWRP.onAddProjectorToRenderer += OnRenderProjector;
+				if (projectorForLWRP == null)
 				{
-					Debug.LogError("Projector For LWRP component was not found!", this);
+					//Debug.LogError("Projector For LWRP component was not found!", this);
 					return;
 				}
 			}
-			m_projectorForSRP.propertyBlock.SetTexture(s_shadowTexParamID, m_shadowTexture);
-			m_projectorForSRP.propertyBlock.SetFloat(s_mipLevelParamID, m_mipLevel);
+			projectorForLWRP.propertyBlock.SetTexture(s_shadowTexParamID, shadowTexture);
+			projectorForLWRP.propertyBlock.SetFloat(s_mipLevelParamID, m_mipLevel);
 		}
-		internal void UpdateVisibilityAndPrepareRendering()
-		{
-			OnPreCull();
-			m_camera.cullingMask = 0;
-			m_camera.clearFlags = UnityEngine.CameraClearFlags.SolidColor;
-			m_camera.enabled = enabled;
-		}
-		internal void ConfigureRenderTarget(RenderShadowTexturePass pass, ref CameraData cameraData)
+		internal void ConfigureRenderTarget(RenderShadowTexturePass pass)
 		{
 			PrepareRendering();
 			if (useIntermediateTexture)
@@ -64,7 +89,7 @@ namespace DynamicShadowProjector
 			}
 			else
 			{
-				pass.ConfigureTarget(new RenderTargetIdentifier(m_shadowTexture));
+				pass.ConfigureTarget(new RenderTargetIdentifier(shadowTexture));
 			}
 			pass.ConfigureClear(ClearFlag.Color, m_camera.backgroundColor);
 		}
@@ -78,12 +103,12 @@ namespace DynamicShadowProjector
 			}
 			else
 			{
-				srcId = new RenderTargetIdentifier(m_shadowTexture);
+				srcId = new RenderTargetIdentifier(shadowTexture);
 			}
 			AddPostRenderPassCommands(postProcessCommandBuffer, srcId);
 			context.ExecuteCommandBuffer(postProcessCommandBuffer);
 			m_shadowTextureValid = true;
-			m_camera.targetTexture = m_shadowTexture;
+			m_camera.targetTexture = shadowTexture;
 			m_camera.clearFlags = CameraClearFlags.Nothing;
 			ReleaseTemporaryRenderTarget();
 		}

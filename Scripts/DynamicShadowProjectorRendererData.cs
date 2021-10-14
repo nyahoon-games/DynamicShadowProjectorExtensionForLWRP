@@ -28,6 +28,7 @@ namespace DynamicShadowProjector.LWRP
 					rendererList.DeleteArrayElementAtIndex(i--);
 				}
 			}
+			serializedPipelineAsset.ApplyModifiedProperties();
 		}
 #endif
 		protected override ScriptableRenderer Create()
@@ -38,13 +39,20 @@ namespace DynamicShadowProjector.LWRP
 			{
 				DeleteDynamicShadowProjectorRenderer(GraphicsSettings.renderPipelineAsset as UniversalRenderPipelineAsset);
 			}
-			for (int level = 0; level < 10; ++level)
+			try
 			{
-				RenderPipelineAsset pipelineAsset = QualitySettings.GetRenderPipelineAssetAt(level);
-				if (pipelineAsset is UniversalRenderPipelineAsset)
+				for (int level = 0; ; ++level)
 				{
-					DeleteDynamicShadowProjectorRenderer(pipelineAsset as UniversalRenderPipelineAsset);
+					RenderPipelineAsset pipelineAsset = QualitySettings.GetRenderPipelineAssetAt(level);
+					if (pipelineAsset is UniversalRenderPipelineAsset)
+					{
+						DeleteDynamicShadowProjectorRenderer(pipelineAsset as UniversalRenderPipelineAsset);
+					}
 				}
+			}
+			catch (System.IndexOutOfRangeException)
+			{
+
 			}
 #endif
 			return null;

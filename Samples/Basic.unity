@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.57481706, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &4
 LightmapSettings:
@@ -138,7 +138,6 @@ GameObject:
   - component: {fileID: 170372683}
   - component: {fileID: 170372682}
   - component: {fileID: 170372687}
-  - component: {fileID: 170372688}
   m_Layer: 0
   m_Name: BlobShadowProjector
   m_TagString: Untagged
@@ -181,7 +180,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 170372681}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 4
   m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
@@ -255,10 +254,6 @@ MonoBehaviour:
   m_preferredTextureFormats: 
   m_camerasForViewClipTest: []
   m_camera: {fileID: 170372683}
-  m_opaqueShadowShaderForLWRP: {fileID: 4800000, guid: 5c1567556c62647e6b5a1a102ef100d9,
-    type: 3}
-  m_transparentShadowShaderForLWRP: {fileID: 4800000, guid: fdbb9b05799ef4de98bfa27a7662c6e6,
-    type: 3}
 --- !u!119 &170372685
 Projector:
   m_ObjectHideFlags: 0
@@ -314,38 +309,6 @@ MonoBehaviour:
   m_perObjectData: 0
   m_stencilPass: {fileID: 0}
   m_stencilTestOptions: 0
---- !u!114 &170372688
-MonoBehaviour:
-  m_ObjectHideFlags: 8
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 170372681}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_RenderShadows: 0
-  m_RequiresDepthTextureOption: 0
-  m_RequiresOpaqueTextureOption: 0
-  m_CameraType: 0
-  m_Cameras: []
-  m_RendererIndex: 1
-  m_VolumeLayerMask:
-    serializedVersion: 2
-    m_Bits: 1
-  m_VolumeTrigger: {fileID: 0}
-  m_RenderPostProcessing: 0
-  m_Antialiasing: 0
-  m_AntialiasingQuality: 2
-  m_StopNaN: 0
-  m_Dithering: 0
-  m_ClearDepth: 1
-  m_AllowXRRendering: 0
-  m_RequiresDepthTexture: 0
-  m_RequiresColorTexture: 0
-  m_Version: 2
 --- !u!1 &325013896
 GameObject:
   m_ObjectHideFlags: 0
@@ -905,7 +868,6 @@ GameObject:
   - component: {fileID: 1215947125}
   - component: {fileID: 1215947127}
   - component: {fileID: 1215947128}
-  - component: {fileID: 1215947129}
   m_Layer: 0
   m_Name: SoftShadowProjector
   m_TagString: Untagged
@@ -951,10 +913,6 @@ MonoBehaviour:
   m_preferredTextureFormats: 
   m_camerasForViewClipTest: []
   m_camera: {fileID: 1215947126}
-  m_opaqueShadowShaderForLWRP: {fileID: 4800000, guid: 5c1567556c62647e6b5a1a102ef100d9,
-    type: 3}
-  m_transparentShadowShaderForLWRP: {fileID: 4800000, guid: fdbb9b05799ef4de98bfa27a7662c6e6,
-    type: 3}
 --- !u!119 &1215947123
 Projector:
   m_ObjectHideFlags: 2
@@ -1023,7 +981,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1215947121}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 4
   m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
@@ -1105,38 +1063,6 @@ MonoBehaviour:
   m_perObjectData: 0
   m_stencilPass: {fileID: 0}
   m_stencilTestOptions: 0
---- !u!114 &1215947129
-MonoBehaviour:
-  m_ObjectHideFlags: 8
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1215947121}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_RenderShadows: 0
-  m_RequiresDepthTextureOption: 0
-  m_RequiresOpaqueTextureOption: 0
-  m_CameraType: 0
-  m_Cameras: []
-  m_RendererIndex: 1
-  m_VolumeLayerMask:
-    serializedVersion: 2
-    m_Bits: 1
-  m_VolumeTrigger: {fileID: 0}
-  m_RenderPostProcessing: 0
-  m_Antialiasing: 0
-  m_AntialiasingQuality: 2
-  m_StopNaN: 0
-  m_Dithering: 0
-  m_ClearDepth: 1
-  m_AllowXRRendering: 0
-  m_RequiresDepthTexture: 0
-  m_RequiresColorTexture: 0
-  m_Version: 2
 --- !u!1 &1290163082
 GameObject:
   m_ObjectHideFlags: 0
@@ -1311,7 +1237,6 @@ GameObject:
   - component: {fileID: 1825361368}
   - component: {fileID: 1825361367}
   - component: {fileID: 1825361371}
-  - component: {fileID: 1825361372}
   m_Layer: 0
   m_Name: HardShadowProjector
   m_TagString: Untagged
@@ -1368,7 +1293,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1825361365}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 4
   m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
@@ -1442,10 +1367,6 @@ MonoBehaviour:
   m_preferredTextureFormats: 
   m_camerasForViewClipTest: []
   m_camera: {fileID: 1825361368}
-  m_opaqueShadowShaderForLWRP: {fileID: 4800000, guid: 5c1567556c62647e6b5a1a102ef100d9,
-    type: 3}
-  m_transparentShadowShaderForLWRP: {fileID: 4800000, guid: fdbb9b05799ef4de98bfa27a7662c6e6,
-    type: 3}
 --- !u!119 &1825361370
 Projector:
   m_ObjectHideFlags: 0
@@ -1487,35 +1408,3 @@ MonoBehaviour:
   m_perObjectData: 0
   m_stencilPass: {fileID: 0}
   m_stencilTestOptions: 0
---- !u!114 &1825361372
-MonoBehaviour:
-  m_ObjectHideFlags: 8
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1825361365}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_RenderShadows: 0
-  m_RequiresDepthTextureOption: 0
-  m_RequiresOpaqueTextureOption: 0
-  m_CameraType: 0
-  m_Cameras: []
-  m_RendererIndex: 1
-  m_VolumeLayerMask:
-    serializedVersion: 2
-    m_Bits: 1
-  m_VolumeTrigger: {fileID: 0}
-  m_RenderPostProcessing: 0
-  m_Antialiasing: 0
-  m_AntialiasingQuality: 2
-  m_StopNaN: 0
-  m_Dithering: 0
-  m_ClearDepth: 1
-  m_AllowXRRendering: 0
-  m_RequiresDepthTexture: 0
-  m_RequiresColorTexture: 0
-  m_Version: 2
