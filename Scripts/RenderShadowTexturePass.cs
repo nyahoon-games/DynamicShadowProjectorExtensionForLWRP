@@ -18,20 +18,37 @@ namespace DynamicShadowProjector.LWRP
 		private Material m_overrideAlphaCutoffMaterial;
 		private Material m_overrideTransparentMaterial;
 		private ShadowTextureRenderer m_renderer;
+		private bool m_rendered = false;
 
 		public RenderShadowTexturePass(ShadowTextureRenderer renderer)
 		{
 			renderPassEvent = RenderPassEvent.BeforeRendering;
 			m_renderer = renderer;
 		}
+		public void ResetFrame()
+		{
+			m_rendered = false;
+		}
 		public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
 		{
-			cmd.SetViewMatrix(m_renderer.projectorCamera.worldToCameraMatrix);
-			cmd.SetProjectionMatrix(m_renderer.projectorCamera.projectionMatrix);
+			if (m_rendered)
+			{
+				// in case of multipass VR, render pass will be called twice even if renderPassEvent == RenderPassEvent.BeforeRendering...
+				return;
+			}
 			m_renderer.ConfigureRenderTarget(this);
 		}
 		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
 		{
+			if (m_rendered)
+			{
+				// in case of multipass VR, render pass will be called twice even if renderPassEvent == RenderPassEvent.BeforeRendering...
+				return;
+			}
+			CommandBuffer cmd = CommandBufferPool.Get();
+			cmd.SetViewProjectionMatrices(m_renderer.projectorCamera.worldToCameraMatrix, m_renderer.projectorCamera.projectionMatrix);
+			context.ExecuteCommandBuffer(cmd);
+			CommandBufferPool.Release(cmd);
 			DrawSceneObject drawScene = m_renderer.drawSceneObject;
 			if (drawScene != null)
 			{
@@ -99,6 +116,7 @@ namespace DynamicShadowProjector.LWRP
 				context.ExecuteCommandBuffer(drawTarget.commandBuffer);
 			}
 			m_renderer.ExecutePostRenderProcess(context);
+			m_rendered = true;
 		}
 		public override void FrameCleanup(CommandBuffer cmd)
 		{

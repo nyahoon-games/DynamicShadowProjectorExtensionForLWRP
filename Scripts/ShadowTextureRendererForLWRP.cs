@@ -16,6 +16,7 @@ namespace DynamicShadowProjector
 	public partial class ShadowTextureRenderer
 	{
 		private RenderShadowTexturePass m_renderPass;
+		private int m_currentFrameCount = -1;
 
 		// use struct to prevent Unity Engine from restoring the object reference after rebuild scripts.
 		private struct ProjectorReference
@@ -51,6 +52,12 @@ namespace DynamicShadowProjector
 			{
 				return;
 			}
+			if (m_currentFrameCount == Time.frameCount)
+			{
+				// do not render shadow texture more than once per frame.
+				return;
+			}
+			m_currentFrameCount = Time.frameCount;
 			if (drawTargetObject != null)
 			{
 				drawTargetObject.OnPreCull();
@@ -59,6 +66,7 @@ namespace DynamicShadowProjector
 			{
 				m_renderPass = new RenderShadowTexturePass(this);
 			}
+			m_renderPass.ResetFrame();
 			ProjectorForLWRP.ProjectorRendererFeature.AddRenderPass(camera, m_renderPass);
 			if (m_isTexturePropertyChanged)
 			{
