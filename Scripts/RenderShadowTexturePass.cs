@@ -36,7 +36,6 @@ namespace DynamicShadowProjector.LWRP
 				// in case of multipass VR, render pass will be called twice even if renderPassEvent == RenderPassEvent.BeforeRendering...
 				return;
 			}
-			cmd.SetViewProjectionMatrices(m_renderer.projectorCamera.worldToCameraMatrix, m_renderer.projectorCamera.projectionMatrix);
 			m_renderer.ConfigureRenderTarget(this);
 		}
 		public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
@@ -46,6 +45,10 @@ namespace DynamicShadowProjector.LWRP
 				// in case of multipass VR, render pass will be called twice even if renderPassEvent == RenderPassEvent.BeforeRendering...
 				return;
 			}
+			CommandBuffer cmd = CommandBufferPool.Get();
+			cmd.SetViewProjectionMatrices(m_renderer.projectorCamera.worldToCameraMatrix, m_renderer.projectorCamera.projectionMatrix);
+			context.ExecuteCommandBuffer(cmd);
+			CommandBufferPool.Release(cmd);
 			DrawSceneObject drawScene = m_renderer.drawSceneObject;
 			if (drawScene != null)
 			{
