@@ -58,6 +58,11 @@ namespace DynamicShadowProjector
 				return;
 			}
 			m_currentFrameCount = Time.frameCount;
+			OnPreCull();
+			if (!isProjectorVisible)
+			{
+				return;
+			}
 			if (drawTargetObject != null)
 			{
 				drawTargetObject.OnPreCull();
