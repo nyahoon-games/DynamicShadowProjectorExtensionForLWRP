@@ -17,7 +17,8 @@ namespace DynamicShadowProjector.LWRP.Editor
 		static DeleteObsoleteObjects()
 		{
 			DeleteMissingRendererData();
-			DeleteAdditionalCameraDataFromDynamicShadowProjectorPrefab();
+			// Stop calling the following function which may generate "Not responding" windows (Issue #2)
+			// DeleteAdditionalCameraDataFromDynamicShadowProjectorPrefab();
 			EditorSceneManager.sceneOpened += DeleteAdditionalCameraDataFromDynamicShadowProjector;
 		}
 
@@ -89,7 +90,7 @@ namespace DynamicShadowProjector.LWRP.Editor
 		}
 		static void DeleteAdditionalCameraDataFromDynamicShadowProjectorPrefab()
 		{
-			string[] dynamicShadowProjectors = AssetDatabase.FindAssets("t:GameObject");
+			string[] dynamicShadowProjectors = AssetDatabase.FindAssets("t:Prefab");
 			foreach (string guid in dynamicShadowProjectors)
 			{
 				string path = AssetDatabase.GUIDToAssetPath(guid);
